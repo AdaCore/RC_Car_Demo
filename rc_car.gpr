@@ -1,0 +1,74 @@
+with "Ada_Drivers_Library/ada_drivers_library.gpr";
+
+project RC_Car is
+
+   type Build_Type is ("Production", "Debug");
+
+   App_BUILD : Build_Type := external ("APP_BUILD", "Production");
+
+   for Main use ("rc_car.adb");
+
+   for Languages use ("Ada");
+
+   for Source_Dirs use ("src\**",
+                        "C:\Users\rogers\source\ARM\Robotics_with_Ada\src\**",
+                        "Ada_Drivers_Library\repo\examples\shared\common\lch_full",
+                        "Ada_Drivers_Library\repo\examples\shared\common\lch_full\led");
+
+   for Object_Dir use "obj/" & App_BUILD;
+
+   for Target use Ada_Drivers_Library'Target;
+
+   for Runtime ("Ada") use -- Ada_Drivers_Library'Runtime ("Ada");
+       "C:\GNATPRO\arm-elf\arm-eabi\lib\gnat\ravenscar-full-stm32f4";  -- full path for sake of CodePeer
+
+   for Create_Missing_Dirs use "True";
+
+   type Remote_Controllers is
+     ("AdaFruit_BLE_App",
+      "PF_IR_8879"); -- Power_Functions_IR_TX_8879, the one with two rotary switches
+
+   Remote : Remote_Controllers := External ("Remote_Control", "PF_IR_8879");
+
+   package Naming is
+      case Remote is
+         when "AdaFruit_BLE_App" =>
+            for spec ("hardware_Configuration") use "hardware_configuration_ble.ads";
+            for body ("Remote_Control") use "remote_control_adafruit_ble_app.adb";
+         when "PF_IR_8879" =>
+            for spec ("hardware_Configuration") use "hardware_configuration_ir.ads";
+            for body ("Remote_Control") use "remote_control_ir_pf8879.adb";
+      end case;
+   end Naming;
+
+   App_Switches := "";
+
+   package Compiler is
+      for Local_Configuration_Pragmas use "gnat.adc";
+      case App_BUILD is
+         when "Production" =>
+              App_Switches := ("-g", "-O3", "-gnatp", "-gnatn");
+         when "Debug" =>
+              App_Switches := ("-g", "-O0", "-gnata", "-fcallgraph-info=su");
+      end case;
+      for Default_Switches ("ada") use Compiler'Default_Switches ("Ada") &
+        App_Switches &
+        ("-gnatwa", "-gnatQ", "-gnatw.X", "-gnaty", "-gnatyO", "-gnatyM120",
+         "-ffunction-sections", "-fdata-sections");
+   end Compiler;
+
+
+   package Ide is
+      for Gnat use "arm-eabi-gnat";
+      for Gnatlist use "arm-eabi-gnatls";
+      for Debugger_Command use "arm-eabi-gdb";
+      for Program_Host use "localhost:4242";
+      for Communication_Protocol use "remote";
+      for Connection_Tool use "st-util";
+   end Ide;
+
+   package CodePeer is
+      for Switches use ("-gnateT=" & project'Project_Dir & "/arm-elf-target.atp");
+   end CodePeer;
+
+end RC_Car;
