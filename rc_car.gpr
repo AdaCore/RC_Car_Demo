@@ -1,6 +1,9 @@
-with "Ada_Drivers_Library/ada_drivers_library.gpr";
+with "Ada_Drivers_Library/boards/stm32f407_discovery/stm32f407_discovery_full.gpr";
 
-project RC_Car is
+project RC_Car extends "Ada_Drivers_Library/examples/shared/common/common.gpr" is
+
+   for Runtime ("Ada") use STM32F407_Discovery_Full'Runtime("Ada");
+--       "C:\GNATPRO\arm-elf\arm-eabi\lib\gnat\ravenscar-full-stm32f4";  -- full path for sake of CodePeer
 
    type Build_Type is ("Production", "Debug");
 
@@ -11,16 +14,11 @@ project RC_Car is
    for Languages use ("Ada");
 
    for Source_Dirs use ("src\**",
-                        "C:\Users\rogers\source\ARM\Robotics_with_Ada\src\**",
-                        "Ada_Drivers_Library\repo\examples\shared\common\lch_full",
-                        "Ada_Drivers_Library\repo\examples\shared\common\lch_full\led");
+                        "../Robotics_with_Ada/src/**");
 
    for Object_Dir use "obj/" & App_BUILD;
 
-   for Target use Ada_Drivers_Library'Target;
-
-   for Runtime ("Ada") use -- Ada_Drivers_Library'Runtime ("Ada");
-       "C:\GNATPRO\arm-elf\arm-eabi\lib\gnat\ravenscar-full-stm32f4";  -- full path for sake of CodePeer
+   for Target use "arm-eabi";
 
    for Create_Missing_Dirs use "True";
 
