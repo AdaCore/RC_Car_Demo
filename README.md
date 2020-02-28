@@ -34,7 +34,7 @@ floating-point in the program.
 
 https://www.st.com/en/evaluation-tools/stm32f4discovery.html
 
-In addition, we use a third-party hardware card known as the NXT_Shield to
+In addition, we use a third-party hardware card known as the NXT Shield to
 interface to the NXT motors and sonar scanner. Specifically, we use "NXT
 Shield Version 2" produced by TKJ Electronics.
 
@@ -69,3 +69,9 @@ corresponding to the desired controller. This selection is accomplished via
 the "Remote_Control" scenario variable.
 
 See the package bodies for how to use the corresponding remote controls.
+
+Videos of our car in action: 
+
+* https://youtu.be/Hngzh5zDM3E
+
+* https://youtu.be/nK9uDJ4909M (in which we can hear the ultrasonic sensor pings)
