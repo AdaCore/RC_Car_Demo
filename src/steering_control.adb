@@ -198,6 +198,9 @@ is
       --  The encoder was reset before moving to the left-most limit, therefore
       --  Center_Offset is positive.
       pragma Assume (Center_Offset > 0.0);
+      --  NB: if the above assertion fails during debugging, make sure that
+      --  the battery is supplying power to the motors etc so that the steering
+      --  motor actually moves.
 
       --  Rationale for this procedure, in light of the above:
       --
