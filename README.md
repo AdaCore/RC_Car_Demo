@@ -23,9 +23,11 @@ LEGO NXT brick is used, requiring a replacement for the Brick and its battery
 pack.
 
 Instructions for building their original car are here:
+
 http://www.hitechnic.com/models
 
 A video of their car is available on YouTube:
+
 https://www.youtube.com/watch?v=KltnZBSvLu4
 
 The computer replacing the Lego Brick is a 32-bit ARM Cortex-M4 MCU on the
@@ -39,6 +41,7 @@ interface to the NXT motors and sonar scanner. Specifically, we use "NXT
 Shield Version 2" produced by TKJ Electronics.
 
 http://blog.tkjelectronics.dk/2011/10/nxt-shield-ver2/
+
 http://shop.tkjelectronics.dk/product_info.php?products_id=29
 
 We use a battery that provides separate connections for +5 and +9 (or +12)
@@ -50,14 +53,14 @@ https://www.xtpower.com/
 
 Available remote controls:
 
-* Power_Functions_IR_TX_8879
+* Lego Power_Functions_IR_TX_8879
   see https://www.lego.com/en-us/themes/power-functions/products/ir-speed-remote-control-8879
 
 * AdaFruit app on cell phone, using BLE for the connection
   see https://learn.adafruit.com/bluefruit-le-connect/controller
 
 The AdaFruit remote app uses a Bluetooth connection from the iPhone or
-Android mobile phone. The other two remotes use IR, so for those we use the
+Android mobile phone. The other remote use IR, so for that we use the
 HiTechnic IR receiver. If the AdaFruit BLE is used we must swap out the IR
 receiver for the Bluefruit LE UART Friend receiver.
 
@@ -68,7 +71,9 @@ used in the RC_Car program you must build the program with the package body
 corresponding to the desired controller. This selection is accomplished via
 the "Remote_Control" scenario variable.
 
-See the package bodies for how to use the corresponding remote controls.
+See the package bodies for how to physically use the corresponding remote controls.
+Note that the BLE version of the package body is probably out of date because
+we primarily use the Lego remote.
 
 Videos of our car in action: 
 
