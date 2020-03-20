@@ -75,6 +75,10 @@ See the package bodies for how to physically use the corresponding remote contro
 Note that the BLE version of the package body is probably out of date because
 we primarily use the Lego remote.
 
+There is an AdaCore Blog entry describing the project:
+
+https://blog.adacore.com/making-an-rc-car-with-ada-and-spark
+
 Videos of our car in action: 
 
 * https://youtu.be/Hngzh5zDM3E
