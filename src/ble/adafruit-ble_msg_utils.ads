@@ -12,8 +12,11 @@ package AdaFruit.BLE_Msg_Utils is
    end record with
      Alignment => 1;
 
-   function Yaw (Q : Quaternion_Data) return Float with Inline;
+   --  for the following three functions, see the Wikipedia entry:
+   --  https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Source_Code_2
    function Pitch (Q : Quaternion_Data) return Float with Inline;
+   function Roll  (Q : Quaternion_Data) return Float with Inline;
+   function Yaw   (Q : Quaternion_Data) return Float with Inline;
 
    type Button_Data is record
       Button_Number : Interfaces.Unsigned_8;
