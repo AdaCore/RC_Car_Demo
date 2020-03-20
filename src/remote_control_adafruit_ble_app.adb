@@ -169,8 +169,8 @@ is
       BLE_Port.Initialize
         (Transceiver    => BLE_UART_Transceiver,
          Transceiver_AF => BLE_UART_Transceiver_AF,
-         Tx_Pin         => BLE_UART_Tx_Pin,
-         Rx_Pin         => BLE_UART_Rx_Pin,
+         Tx_Pin         => BLE_UART_TXO_Pin,
+         Rx_Pin         => BLE_UART_RXI_Pin,
          CTS_Pin        => BLE_UART_CTS_Pin,
          RTS_Pin        => BLE_UART_RTS_Pin);
 
