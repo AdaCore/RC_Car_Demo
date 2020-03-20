@@ -4,7 +4,7 @@
 --  for both Android and iOS. The app is named "Bluefruit" since it uses a BLE
 --  connection.
 --
---  To use the AdaFruit app as controller, follow theese steps *in the order
+--  To use the AdaFruit app as controller, follow these steps *in the order
 --  shown* below:
 --
 --  1) First power up the RC car itself
@@ -12,7 +12,7 @@
 --  2) Rotate your cellphone so that the major axis is in landscape
 --  orientation. You must do this before you connect to the BLE device on the
 --  car. This order is necessary because we are using the quaternion data sent
---  from the app, reflectng the phone's orientation, and we don't want the
+--  from the app, reflecting the phone's orientation, and we don't want the
 --  rotation to landscape mode to be included in the state.
 --
 --  3) Start the app and connect to the "Adafruit Bluefruit LE" board listed in
