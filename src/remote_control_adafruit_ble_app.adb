@@ -11,7 +11,7 @@
 --
 --  2) Rotate your cellphone so that the major axis is in landscape
 --  orientation. You must do this before you connect to the BLE device on the
---  car. This order is necessary because we are using the quaternion data sent
+--  car. This order is necessary because we are using data sent
 --  from the app, reflecting the phone's orientation, and we don't want the
 --  rotation to landscape mode to be included in the state.
 --
@@ -21,7 +21,7 @@
 --
 --  4) Select the "Controller" option in the app.
 --
---  5) Slide the control to enable the Quaternion data. A little window will
+--  5) Slide the control to enable the Accelerometer data. A little window will
 --  appear, showing the values. These values are now being sent from the phone to the
 --  car. The car is interpreting these values as speed/direction controls.
 --
@@ -30,9 +30,6 @@
 --
 --  7) Tip the phone forward or backward to make the wheels run forward or
 --  backward. The speed is proportional to the angle tipped.
---
---  NB: Don't rotate the phone more than 90 degrees in either direction. Look up
---  "gimbal lock" if you want to know why.
 
 with Global_Initialization;
 with Ada.Real_Time;              use Ada.Real_Time;
@@ -110,7 +107,7 @@ is
    -----------------------
 
    procedure Parse_App_Message is
-     new Parse_AdaFruit_Controller_Message (Payload => Quaternion_Data);
+     new Parse_AdaFruit_Controller_Message (Payload => Three_Axes_Data);
 
    -------------
    -- Receive --
@@ -120,31 +117,32 @@ is
      (Requested_Vector   : out Travel_Vector;
       Requested_Steering : out Integer)
    is
-      Buffer_Size        : constant := 2 * Quaternion_Msg_Length;
-      --  Buffer size is arbitrary but should be bigger than just one quaternion
-      --  message length. An integer multiple of that message length is a good
-      --  idea. The issue is that we will be receiving a continuous stream
-      --  of such messages from the phone, and we will not necessarily start
-      --  receiving just as a new message arrives. We might instead receive a
-      --  partial message at the beginning of the buffer. Thus when parsing we
-      --  look for the start of the message, but the point is that we need a
-      --  big enough buffer to handle at least one message and a partial message
-      --  too. We don't want the buffer size to be too big, though.
+      Buffer_Size        : constant := 2 * Accelerometer_Msg_Length;
+      --  Buffer size is arbitrary but should be bigger than just one message
+      --  length. An integer multiple of that message length is a good idea.
+      --  The issue is that we will be receiving a continuous stream of such
+      --  messages from the phone, and we will not necessarily start receiving
+      --  just as a new message arrives. We might instead receive a partial
+      --  message at the beginning of the buffer. Thus when parsing we look for
+      --  the start of the message, but the point is that we need a big enough
+      --  buffer to handle at least one message and a partial message too. We
+      --  don't want the buffer size to be too big, though.
       Buffer             : String (1 .. Buffer_Size);
-      Q                  : Quaternion_Data;
+      TAD                : Three_Axes_Data;
       Successful_Parse   : Boolean;
       Power              : Integer;
    begin
       BLE.Get (Buffer);
-      Parse_App_Message (Buffer, Quaternion_Msg, Q, Successful_Parse);
+      Parse_App_Message (Buffer, Accelerometer_Msg, TAD, Successful_Parse);
       if not Successful_Parse then
          Requested_Vector.Emergency_Braking := True;
+         Requested_Vector.Power := 0;
          Requested_Steering := 0;
          return;
       end if;
 
-      Requested_Steering := Integer (Yaw (Q));
-      Power := Integer (Pitch (Q));
+      Requested_Steering := Integer (TAD.Y * 100.0);
+      Power := Integer (-TAD.X * 100.0);
 
       if Power > 0 then
          Requested_Vector.Direction := Forward;
