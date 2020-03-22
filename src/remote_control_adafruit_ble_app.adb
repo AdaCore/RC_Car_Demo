@@ -9,11 +9,12 @@
 --
 --  1) First power up the RC car itself
 --
---  2) Rotate your cellphone so that the major axis is in landscape
---  orientation. You must do this before you connect to the BLE device on the
---  car. This order is necessary because we are using data sent
---  from the app, reflecting the phone's orientation, and we don't want the
---  rotation to landscape mode to be included in the state.
+--  2) Lay the phone down on a flat surface. Rotate your cellphone so that the
+--  major axis is in landscape orientation. Do this before you connect to the
+--  BLE device on the car. This step is necessary because we are using data
+--  sent from the app to control the drive motor and steering, reflecting the
+--  rotations of the phone. When the phone is flat there is no power sent to
+--  the drive motor.
 --
 --  3) Start the app and connect to the "Adafruit Bluefruit LE" board listed in
 --  the app window. There may be other devices discovered and listed as well,
@@ -25,8 +26,8 @@
 --  appear, showing the values. These values are now being sent from the phone to the
 --  car. The car is interpreting these values as speed/direction controls.
 --
---  6) Rotate the phone like you're driving with a steering wheel. The car's
---  wheels should turn in response to these rotations.
+--  6) Rotate the phone abut the center of the phone, like you're driving with a
+--  steering wheel. The car's wheels should turn in response to these rotations.
 --
 --  7) Tip the phone forward or backward to make the wheels run forward or
 --  backward. The speed is proportional to the angle tipped.
