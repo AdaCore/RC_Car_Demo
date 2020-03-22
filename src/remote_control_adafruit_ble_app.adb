@@ -9,27 +9,28 @@
 --
 --  1) First power up the RC car itself
 --
---  2) Lay the phone down on a flat surface. Rotate your cellphone so that the
---  major axis is in landscape orientation. Do this before you connect to the
---  BLE device on the car. This step is necessary because we are using data
---  sent from the app to control the drive motor and steering, reflecting the
---  rotations of the phone. When the phone is flat there is no power sent to
---  the drive motor.
+--  2) Lay the phone down on a flat surface. This step is necessary because we
+--  are using data sent from the app to control the drive motor and steering,
+--  reflecting the rotations of the phone. When the phone is flat there is no
+--  power sent to the drive motor.
 --
---  3) Start the app and connect to the "Adafruit Bluefruit LE" board listed in
+--  3) Rotate your cellphone so that the major axis is in landscape orientation.
+--
+--  4) Start the app and connect to the "Adafruit Bluefruit LE" board listed in
 --  the app window. There may be other devices discovered and listed as well,
 --  but don't use those.
 --
---  4) Select the "Controller" option in the app.
+--  5) Select the "Controller" option in the app.
 --
---  5) Slide the control to enable the Accelerometer data. A little window will
---  appear, showing the values. These values are now being sent from the phone to the
---  car. The car is interpreting these values as speed/direction controls.
+--  6) Slide the control to enable the Accelerometer data. A little window will
+--  appear, showing the values. These values are now being sent from the phone
+--  to the car. The car is interpreting these values as speed/steering direction
+--  controls.
 --
---  6) Rotate the phone abut the center of the phone, like you're driving with a
+--  7) Rotate the phone abut the center of the phone, like you're driving with a
 --  steering wheel. The car's wheels should turn in response to these rotations.
 --
---  7) Tip the phone forward or backward to make the wheels run forward or
+--  8) Tip the phone forward or backward to make the wheels run forward or
 --  backward. The speed is proportional to the angle tipped.
 
 with Global_Initialization;
