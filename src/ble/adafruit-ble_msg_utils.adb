@@ -26,6 +26,20 @@ package body AdaFruit.BLE_Msg_Utils is
       return Result;
    end Yaw;
 
+   ----------
+   -- Roll --
+   ----------
+
+   function Roll (Q : Quaternion_Data) return Float is
+      Sinr_Cosp : constant Float := 2.0 * (Q.W * Q.X + Q.Y * Q.Z);
+      Cosr_Cosp : constant Float := 1.0 - 2.0 * (Q.X * Q.X + Q.Y * Q.Y);
+      Result    : Float;
+   begin
+      Result := Arctan (Sinr_Cosp, Cosr_Cosp);
+      Result := Result * Radians_To_Degrees;
+      return Result;
+   end Roll;
+
    -----------
    -- Pitch --
    -----------

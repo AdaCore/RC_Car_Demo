@@ -99,8 +99,8 @@ package Hardware_Configuration is
    BLE_UART_MOD_Pin : GPIO_Point renames PD0;
    BLE_UART_CTS_Pin : GPIO_Point renames PD3;
    BLE_UART_RTS_Pin : GPIO_Point renames PD4;
-   BLE_UART_Tx_Pin  : GPIO_Point renames PD5;  -- RXI pin on breakout board
-   BLE_UART_Rx_Pin  : GPIO_Point renames PD6;  -- TXO pin on breakout board
+   BLE_UART_RXI_Pin : GPIO_Point renames PD5;  -- goes to RXI pin on BLE breakout board
+   BLE_UART_TXO_Pin : GPIO_Point renames PD6;  -- goes to TXO pin on BLE breakout board
 
    BLE_UART_Transceiver     : constant access USART := USART_2'Access;
    BLE_UART_Transceiver_AF  : constant STM32.GPIO_Alternate_Function := GPIO_AF_USART2_7;
