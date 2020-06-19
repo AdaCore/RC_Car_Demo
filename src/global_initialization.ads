@@ -1,6 +1,6 @@
 --  This package provides a synchronization mechanism used to signal to the
 --  various tasks that the critical instant has arrived and that, as a result,
---  their periodic executon can now commence (with the Time value specified for
+--  their periodic execution can now commence (with the Time value specified for
 --  the epoch).
 
 with System_Configuration;
@@ -15,11 +15,11 @@ is
    is
       procedure Signal (Epoch : Time);
       --  signal completion of the global initialization sequence and specify
-      --  the beginnning of the epoch for task periodic processing
+      --  the beginning of the epoch for task periodic processing
 
       entry Wait (Epoch : out Time);
       --  await completion of the global initialization sequence and get
-      --  the beginnning of the epoch for task periodic processing
+      --  the beginning of the epoch for task periodic processing
 
    private
       Signalled    : Boolean := False;
