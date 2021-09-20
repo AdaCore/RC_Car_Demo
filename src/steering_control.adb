@@ -27,8 +27,8 @@ is
       (Min => -Power_Level_Last, Max => +Power_Level_Last);
    --  The limits for the PID controller output power values, based on the
    --  NXT motor's largest power value. The NXT Power_Level type is an integer
-   --  ranging from 0 to 100. The PID controller wil compute negative values
-   --  as well as posiitve values, to turn the steering mechanism in either
+   --  ranging from 0 to 100. The PID controller will compute negative values
+   --  as well as positive values, to turn the steering mechanism in either
    --  direction, so we want to limit the PID to -100 .. 100. We later take the
    --  absolute value after using the sign to get the direction, in procedure
    --  Convert_To_Motor_Values.
