@@ -87,7 +87,7 @@ with Last_Chance_Handler;  pragma Unreferenced (Last_Chance_Handler);
 with Engine_Control;       pragma Unreferenced (Engine_Control);
 with Steering_Control;     pragma Unreferenced (Steering_Control);
 with Remote_Control;       pragma Unreferenced (Remote_Control);
-with Vehicle;              pragma Unreferenced (Vehicle);
+with Vehicle;
 with Global_Initialization;
 with System_Configuration;
 with STM32.Board;
