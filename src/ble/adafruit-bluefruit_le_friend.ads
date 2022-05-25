@@ -11,7 +11,6 @@
 --
 --  https://learn.adafruit.com/introducing-the-adafruit-bluefruit-le-uart-friend/pinouts
 
-with HAL;          use HAL;
 with STM32.GPIO;   use STM32.GPIO;
 
 generic
