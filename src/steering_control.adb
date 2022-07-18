@@ -139,11 +139,11 @@ is
       Sample_Inteval : constant Time_Span := Milliseconds (100);  -- arbitrary
       Next_Release   : Time;
       Testing_Power  : constant Power_Level := 80;
-      --  The power setting is arbitrary, but should be kept realtively low so
+      --  The power setting is arbitrary, but should be kept relatively low so
       --  as to avoid stressing the steering mechanism unduly. That said, it
       --  must be enough to really go to the physical limits, even on carpet.
    begin
-      --  The pupose of this routine is to determine the value of the global
+      --  The purpose of this routine is to determine the value of the global
       --  mechanical steering "zero," ie, the value when steering straight
       --  ahead. This value is used as an offset when steering to commanded
       --  angles received from the remote control. Therefore, we drive the
@@ -184,7 +184,7 @@ is
          Previous_Angle := Current_Angle;
          Current_Angle := Current_Motor_Angle (Steering_Motor);
          --  Exit when no further progress made. We are driving the motor
-         --  foreward so the encoder count will be increasing, hence ">"
+         --  forward so the encoder count will be increasing, hence ">"
          exit when not (Current_Angle > Previous_Angle);
       end loop;
 
