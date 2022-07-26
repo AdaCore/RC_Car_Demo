@@ -1,10 +1,10 @@
 with Global_Initialization;
 with Ada.Real_Time;  use Ada.Real_Time;
+with Interfaces;     use Interfaces;
 with Vehicle;        use Vehicle;
 with NXT.Motors;     use NXT.Motors;
 with Remote_Control;
-with Math_Utilities;
-with Process_Control_Floating_Point;
+with Ada_Steering_Controller;
 
 package body Steering_Control
    with SPARK_Mode
@@ -13,91 +13,48 @@ is
    Period  : constant Time_Span := Milliseconds (System_Configuration.Steering_Control_Period);
    --  NB: important to PID tuning!
 
-   package Closed_Loop is new Process_Control_Floating_Point (Float, Long_Float);
-   use Closed_Loop;
-
-   --  steering PID gain constants
-   Kp : constant := 6.0;
-   Ki : constant := 5.0;
-   Kd : constant := 0.1;
-
-   Power_Level_Last : constant Float := Float (Power_Level'Last);
-
-   Power_Level_Limits : constant Closed_Loop.Bounds :=
-      (Min => -Power_Level_Last, Max => +Power_Level_Last);
-   --  The limits for the PID controller output power values, based on the
-   --  NXT motor's largest power value. The NXT Power_Level type is an integer
-   --  ranging from 0 to 100. The PID controller wil compute negative values
-   --  as well as posiitve values, to turn the steering mechanism in either
-   --  direction, so we want to limit the PID to -100 .. 100. We later take the
-   --  absolute value after using the sign to get the direction, in procedure
-   --  Convert_To_Motor_Values.
-
-   Encoder_Counts_Per_Degree : constant Float := Float (NXT.Motors.Encoder_Counts_Per_Revolution) / 360.0;
-
-   procedure Limit is new Math_Utilities.Bound_Floating_Value (Float);
-
    procedure Initialize_Steering_Mechanism (Center_Offset : out Float) with
      Post => Center_Offset > 0.0;
    --  Compute the steering zero offset value by powering the steering mechanism
    --  to the mechanical limits.
 
    function Current_Motor_Angle (This : Basic_Motor) return Float with Inline;
-   --  Returns the current encoder count for This motor in degree units
-
-   procedure Convert_To_Motor_Values
-     (Signed_Power : Float;
-      Motor_Power  : out NXT.Motors.Power_Level;
-      Direction    : out NXT.Motors.Directions)
-   with
-     Inline,
-     Pre => Within_Limits (Signed_Power, Power_Level_Limits);
-   --  Convert the signed power value from the PID controller to NXT motor
-   --  values. We know the precondition will hold because we set those limits
-   --  via the call to Steering_Computer.Configure
+   --  Returns the current angle of This motor in degree units
 
    -----------
    -- Servo --
    -----------
 
    task body Servo is
+      Controller_State   : Ada_Steering_Controller.Ada_Steering_Controller_State;
       Next_Release       : Time;
-      Target_Angle       : Float;
-      Current_Angle      : Float := 0.0;  -- zero for call to Steering_Computer.Enable
-      Steering_Power     : Float := 0.0;  -- zero for call to Steering_Computer.Enable
+      Target_Angle       : Integer_8;
       Motor_Power        : NXT.Motors.Power_Level;
       Rotation_Direction : NXT.Motors.Directions;
-      Steering_Offset    : Float;
-      Steering_Computer  : Closed_Loop.PID_Controller;
    begin
-      Steering_Computer.Configure
-        (Proportional_Gain => Kp,
-         Integral_Gain     => Ki,
-         Derivative_Gain   => Kd,
-         Period            => System_Configuration.Steering_Control_Period,
-         Output_Limits     => Power_Level_Limits,
-         Direction         => Closed_Loop.Direct);
-
       Global_Initialization.Critical_Instant.Wait (Epoch => Next_Release);
 
-      Initialize_Steering_Mechanism (Steering_Offset);
+      declare
+         Steering_Offset : Float;
+      begin
+         Initialize_Steering_Mechanism (Steering_Offset);
 
-      Steering_Computer.Enable (Process_Variable => Current_Angle, Control_Variable => Steering_Power);
+         Ada_Steering_Controller.Configure (Steering_Offset);
+      end;
+
+      Ada_Steering_Controller.Initialize (Controller_State);
+
       loop
-         pragma Loop_Invariant (Steering_Computer.Current_Output_Limits = Power_Level_Limits);
-         pragma Loop_Invariant (Within_Limits (Steering_Power, Power_Level_Limits));
+         pragma Loop_Invariant (Ada_Steering_Controller.Within_Limits (Controller_State));
 
-         Current_Angle := Current_Motor_Angle (Steering_Motor) - Steering_Offset;
+         Target_Angle := Integer_8 (Remote_Control.Requested_Steering_Angle);
 
-         Target_Angle := Float (Remote_Control.Requested_Steering_Angle);
-         Limit (Target_Angle, -Steering_Offset, Steering_Offset);
-
-         Steering_Computer.Compute_Output
-           (Process_Variable => Current_Angle,
-            Setpoint         => Target_Angle,
-            Control_Variable => Steering_Power);
-
-         Convert_To_Motor_Values (Steering_Power, Motor_Power, Rotation_Direction);
+         Ada_Steering_Controller.Compute
+           (Encoder_Count            => Steering_Motor.Encoder_Count,
+            Requested_Steering_Angle => Target_Angle,
+            Motor_Power              => Motor_Power,
+            Rotation_Direction       => Rotation_Direction,
+            State                    => Controller_State);
 
          Steering_Motor.Engage (Rotation_Direction, Motor_Power);
 
@@ -106,28 +63,12 @@ is
       end loop;
    end Servo;
 
-   -----------------------------
-   -- Convert_To_Motor_Values --
-   -----------------------------
-
-   procedure Convert_To_Motor_Values
-     (Signed_Power : Float;
-      Motor_Power  : out NXT.Motors.Power_Level;
-      Direction    : out NXT.Motors.Directions)
-   is
-   begin
-      Direction := Vehicle.To_Steering_Motor_Direction (Signed_Power);
-      --  The motor values are a percentage from 0 .. 100. The sign of the value
-      --  is only used in the statement above, for "turn" directions.
-      Motor_Power := Power_Level (abs (Signed_Power));
-   end Convert_To_Motor_Values;
-
    -------------------------
    -- Current_Motor_Angle --
    -------------------------
 
    function Current_Motor_Angle (This : Basic_Motor) return Float is
-     ((Float (This.Encoder_Count) / Encoder_Counts_Per_Degree));
+     (Float (This.Encoder_Count) / Float (Encoder_Counts_Per_Degree));
 
    -----------------------------------
    -- Initialize_Steering_Mechanism --
@@ -253,5 +194,4 @@ is
       --  from the motor's reported angle to translate the reported value into
       --  the vehicle's frame of reference.
    end Initialize_Steering_Mechanism;
-
 end Steering_Control;
