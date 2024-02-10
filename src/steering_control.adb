@@ -68,16 +68,14 @@ is
       Motor_Power        : NXT.Motors.Power_Level;
       Rotation_Direction : NXT.Motors.Directions;
       Steering_Offset    : Float;
-      Steering_Computer  : Closed_Loop.PID_Controller;
-   begin
-      Steering_Computer.Configure
+      Steering_Computer  : PID_Controller := Configured_Controller
         (Proportional_Gain => Kp,
          Integral_Gain     => Ki,
          Derivative_Gain   => Kd,
-         Period            => System_Configuration.Steering_Control_Period,
+         Invocation_Period => System_Configuration.Steering_Control_Period,
          Output_Limits     => Power_Level_Limits,
          Direction         => Closed_Loop.Direct);
-
+   begin
       Global_Initialization.Critical_Instant.Wait (Epoch => Next_Release);
 
       Initialize_Steering_Mechanism (Steering_Offset);
