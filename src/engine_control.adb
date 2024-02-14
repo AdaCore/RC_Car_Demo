@@ -17,8 +17,10 @@ is
    --  we must declare this here, and access it as shown in the task body, for SPARK
 
    procedure Indicate_Emergency_Stopped;
+   --  The Red LED is turned on and the Green LED is turned off.
 
    procedure Indicate_Running;
+   --  The Red LED is turned off and the Green LED is toggled.
 
    procedure Apply
      (Direction : Remote_Control.Travel_Directions;
@@ -64,12 +66,15 @@ is
                Collision_Detection.Check (Requested_Direction, Current_Speed, Collision_Imminent);
                if Collision_Imminent then
                   Emergency_Stop;
+                  Indicate_Emergency_Stopped;
                   Current_State := Awaiting_Reversal;
                elsif Requested_Braking then
                   Emergency_Stop;
+                  Indicate_Emergency_Stopped;
                   Current_State := Braked;
                else
                   Apply (Requested_Direction, Requested_Power);
+                  Indicate_Running;
                end if;
             when Braked =>
                if not Requested_Braking then
@@ -93,7 +98,6 @@ is
    procedure Emergency_Stop is
    begin
       Engine.Stop;
-      Indicate_Emergency_Stopped;
    end Emergency_Stop;
 
    -----------
@@ -110,7 +114,6 @@ is
       else
          Engine.Coast;
       end if;
-      Indicate_Running;
    end Apply;
 
    --------------------------------

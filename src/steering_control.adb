@@ -27,8 +27,8 @@ is
       (Min => -Power_Level_Last, Max => +Power_Level_Last);
    --  The limits for the PID controller output power values, based on the
    --  NXT motor's largest power value. The NXT Power_Level type is an integer
-   --  ranging from 0 to 100. The PID controller wil compute negative values
-   --  as well as posiitve values, to turn the steering mechanism in either
+   --  ranging from 0 to 100. The PID controller will compute negative values
+   --  as well as positive values, to turn the steering mechanism in either
    --  direction, so we want to limit the PID to -100 .. 100. We later take the
    --  absolute value after using the sign to get the direction, in procedure
    --  Convert_To_Motor_Values.
@@ -68,16 +68,14 @@ is
       Motor_Power        : NXT.Motors.Power_Level;
       Rotation_Direction : NXT.Motors.Directions;
       Steering_Offset    : Float;
-      Steering_Computer  : Closed_Loop.PID_Controller;
-   begin
-      Steering_Computer.Configure
+      Steering_Computer  : PID_Controller := Configured_Controller
         (Proportional_Gain => Kp,
          Integral_Gain     => Ki,
          Derivative_Gain   => Kd,
-         Period            => System_Configuration.Steering_Control_Period,
+         Invocation_Period => System_Configuration.Steering_Control_Period,
          Output_Limits     => Power_Level_Limits,
          Direction         => Closed_Loop.Direct);
-
+   begin
       Global_Initialization.Critical_Instant.Wait (Epoch => Next_Release);
 
       Initialize_Steering_Mechanism (Steering_Offset);
@@ -139,11 +137,11 @@ is
       Sample_Inteval : constant Time_Span := Milliseconds (100);  -- arbitrary
       Next_Release   : Time;
       Testing_Power  : constant Power_Level := 80;
-      --  The power setting is arbitrary, but should be kept realtively low so
+      --  The power setting is arbitrary, but should be kept relatively low so
       --  as to avoid stressing the steering mechanism unduly. That said, it
       --  must be enough to really go to the physical limits, even on carpet.
    begin
-      --  The pupose of this routine is to determine the value of the global
+      --  The purpose of this routine is to determine the value of the global
       --  mechanical steering "zero," ie, the value when steering straight
       --  ahead. This value is used as an offset when steering to commanded
       --  angles received from the remote control. Therefore, we drive the
@@ -184,7 +182,7 @@ is
          Previous_Angle := Current_Angle;
          Current_Angle := Current_Motor_Angle (Steering_Motor);
          --  Exit when no further progress made. We are driving the motor
-         --  foreward so the encoder count will be increasing, hence ">"
+         --  forward so the encoder count will be increasing, hence ">"
          exit when not (Current_Angle > Previous_Angle);
       end loop;
 
